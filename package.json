@@ -1,0 +1,24 @@
+{
+  "name": "node-medium-express-shopify",
+  "version": "1.0.0",
+  "description": "I followed some medium blogs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AdityaKumarJha/Node-Express-Shopify-App.git"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "shopify"
+  ],
+  "author": "aditya kumar jha",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AdityaKumarJha/Node-Express-Shopify-App/issues"
+  },
+  "homepage": "https://github.com/AdityaKumarJha/Node-Express-Shopify-App#readme"
+}
