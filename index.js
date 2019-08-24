@@ -1,4 +1,5 @@
-///////////// 🔥 Initial Setup /////////////
+///////////// Initial Setup /////////////
+
 const dotenv = require('dotenv').config();
 const express = require('express');
 const crypto = require('crypto');
@@ -9,14 +10,14 @@ const axios = require('axios');
 
 const shopifyApiPublicKey = process.env.SHOPIFY_API_PUBLIC_KEY;
 const shopifyApiSecretKey = process.env.SHOPIFY_API_SECRET_KEY;
-const scopes = 'Shoes';
-const appUrl = 'https://7474e2d8.ngrok.io';
+const scopes = 'write_products';
+const appUrl = 'https://7474e2d8.ngrok.io/';
 
 const app = express();
 const PORT = 3000
 
 app.get('/', (req, res) => {
-  res.send('npm is better than yarn')
+  res.send('npm is better than node')
 });
 
 ///////////// Helper Functions /////////////
@@ -48,7 +49,9 @@ const fetchShopData = async (shop, accessToken) => await axios(buildShopDataRequ
 app.get('/shopify', (req, res) => {
   const shop = req.query.shop;
 
-  if (!shop) { return res.status(400).send('no shop')}
+  if (!shop) {
+    return res.status(400).send('no shop')
+  }
 
   const state = nonce();
 
@@ -59,16 +62,27 @@ app.get('/shopify', (req, res) => {
 });
 
 app.get('/shopify/callback', async (req, res) => {
-  const { shop, code, state } = req.query;
+  const {
+    shop,
+    code,
+    state
+  } = req.query;
   const stateCookie = cookie.parse(req.headers.cookie).state;
 
-  if (state !== stateCookie) { return res.status(403).send('Cannot be verified')}
+  if (state !== stateCookie) {
+    return res.status(403).send('Cannot be verified')
+  }
 
-  const { hmac, ...params } = req.query
+  const {
+    hmac,
+    ...params
+  } = req.query
   const queryParams = querystring.stringify(params)
   const hash = generateEncryptedHash(queryParams)
 
-  if (hash !== hmac) { return res.status(400).send('HMAC validation failed')}
+  if (hash !== hmac) {
+    return res.status(400).send('HMAC validation failed')
+  }
 
   try {
     const data = {
@@ -78,17 +92,15 @@ app.get('/shopify/callback', async (req, res) => {
     };
     const tokenResponse = await fetchAccessToken(shop, data)
 
-    const { access_token } = tokenResponse.data
+    const {
+      access_token
+    } = tokenResponse.data
 
     const shopData = await fetchShopData(shop, access_token)
     res.send(shopData.data.shop)
 
-  } catch(err) {
+  } catch (err) {
     console.log(err)
     res.status(500).send('something went wrong')
   }
 });
-
-///////////// Start the Server /////////////
-
-app.listen(PORT, () => console.log(`listening on port ${PORT}`));
